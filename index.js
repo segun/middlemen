@@ -20,7 +20,6 @@ app.get("/key/:id", (req, res) => {
     const encryptedData = CryptoJS.AES.encrypt(id, secretKey).toString();
 
     imdb[id] = encryptedData,        
-    console.log(imdb);
     res.json({
         status: 'success',
         passphrase: encryptedData,
@@ -35,12 +34,8 @@ app.post("/cmc/:id", async (req, res) => {
         cmcEncryptedKey
     } = req.body;
 
-
-    console.log(req.body);
     const passphrase = imdb[id];
     const decryptedKey = CryptoJS.AES.decrypt(cmcEncryptedKey, passphrase).toString(CryptoJS.enc.Utf8);
-
-    console.log(decryptedKey);
 
     const instance = axios.create({
         headers: {
@@ -49,7 +44,6 @@ app.post("/cmc/:id", async (req, res) => {
     });
 
     const response = await instance.get(url);
-    console.log(response.data.data[0].quote['BNB'].price);
     delete imdb[id];
     res.json(response.data);
 });
